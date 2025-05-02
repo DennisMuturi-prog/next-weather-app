@@ -3,7 +3,7 @@ import { Daily, WeatherData } from '../types'
 import { findBestMatch, formatDate } from '../actions/NaturalLib'
 import Image from 'next/image'
 
-function ForecastCard({ weatherData }: { weatherData: Daily }) {
+function ForecastCard({ weatherData,units }: { weatherData: Daily,units:string }) {
     return (
         <div className="card w-80">
             <div className="card-body">
@@ -17,7 +17,7 @@ function ForecastCard({ weatherData }: { weatherData: Daily }) {
                 />
                 <p className='text-content2'>{weatherData.summary}</p>
                 <div className="card-footer">
-                    <p className='text-content1'>{`${weatherData.temp.min} - ${weatherData.temp.max}`}</p>
+                    <p className='text-content1'>{`${weatherData.temp.min} - ${weatherData.temp.max} ${units}`}</p>
                 </div>
             </div>
         </div>
