@@ -35,15 +35,10 @@ export function findBestMatch(condition: string): string {
 export function formatDate(unixTimestamp: number): string {
   const date = new Date(unixTimestamp * 1000); // Convert Unix timestamp to milliseconds
 
-  // Extract day, month, hours, and minutes
+  // Extract day, month, and year
   const day = date.getDate();
   const month = date.toLocaleString("en-US", { month: "long" }); // Full month name (e.g., "May")
-  const hours = date.getHours();
-  const minutes = date.getMinutes();
-  const period = hours >= 12 ? "pm" : "am";
-
-  // Convert hours to 12-hour format
-  const formattedHours = hours % 12 || 12; // Convert 0 to 12 for midnight
+  const year = date.getFullYear(); // Extract the year (e.g., 2025)
 
   // Add ordinal suffix to the day
   const ordinalSuffix = (n: number) => {
@@ -60,8 +55,6 @@ export function formatDate(unixTimestamp: number): string {
     }
   };
 
-  // Return the formatted date string
-  return `${day}${ordinalSuffix(day)} ${month} ${formattedHours}:${minutes
-    .toString()
-    .padStart(2, "0")}${period}`;
+  // Return the formatted date string (e.g., "2nd May 2025")
+  return `${day}${ordinalSuffix(day)} ${month} ${year}`;
 }
