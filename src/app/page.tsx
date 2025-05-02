@@ -1,20 +1,17 @@
+import { getWeatherDetails } from "./actions/geocoding";
+import SearchBar from "./components/SearchBar"
 
-export default function Home() {
+export default async function Home({ searchParams }: { searchParams: { [key: string]: string | undefined } }) {
+  const { latitude, longitude, location } = await searchParams
+  const weatherData = await getWeatherDetails({ latitude: Number(latitude), longitude: Number(longitude) })
+  // const latitude=searchParams?.lat || 20
+  // const longitude=searchParams?.lon || 20
+  // const locationName=searchParams?.name || "no current location"
+
   return (
-    <div>
-      <div></div>
+    <>
       <div className="navbar">
-        <div className="navbar-center">
-          <div className="dropdown">
-          <input className="input" placeholder="enter location" />
-            <div className="dropdown-menu">
-              <a className="dropdown-item text-sm">Profile</a>
-              <a tabIndex={-1} className="dropdown-item text-sm">Account settings</a>
-              <a tabIndex={-1} className="dropdown-item text-sm">Subscriptions</a>
-            </div>
-          </div>
-          <button className="btn btn-primary" >search</button>
-        </div>
+        <SearchBar />
         <div className="navbar-end">
           <div className="tabs tabs-boxed">
             <input type="radio" name="units" id="unit1" className="tab-toggle" defaultChecked />
@@ -25,10 +22,10 @@ export default function Home() {
             <label htmlFor="unit3" className="tab">Kelvin</label>
           </div>
         </div>
-        <div></div>
-        <div></div>
       </div>
-
-    </div>
+      
+      <div>
+      </div>
+    </>
   );
 }
