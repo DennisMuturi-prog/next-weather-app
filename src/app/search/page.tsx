@@ -1,20 +1,23 @@
 import { getWeatherDetails } from "../actions/geocoding";
 import ForecastCard from "../components/ForecastCard";
-import SearchBar from "../components/SearchBar"
 import SideBar from "../components/SideBar";
 
 export default async function Home({ searchParams }: { searchParams: { [key: string]: string | undefined } }) {
-    const { lat, lon, location, state } = await searchParams
-    const weatherData = await getWeatherDetails({ latitude: lat ? Number(lat) : 20, longitude: lon ? Number(lon) : 20 })
+    const { lat, lon, location, state,units } = await searchParams
+    const weatherData = await getWeatherDetails({ latitude: lat ? Number(lat) : 20, longitude: lon ? Number(lon) : 20 },units || 'metric')
+    const measureUnit = units || "metric"
+    const temperatureUnit = measureUnit === "metric" ? "°C" : measureUnit === "imperial" ? "°F" : "K";
+    const speedUnit = measureUnit === "metric" ? "km/h" : measureUnit === "imperial" ? "miles/hr" : "m/s";
+
 
     return (
         <>
             <div className="flex">
 
-                <SideBar weatherData={weatherData} location={location || "unknown"} />
+                <SideBar weatherData={weatherData} location={location || "unknown"} units={temperatureUnit} />
 
                 <div className="flex flex-wrap">
-                    {weatherData.daily.slice(1, 4).map(day => <ForecastCard key={day.dt} weatherData={day} />)}
+                    {weatherData.daily.slice(1, 4).map(day => <ForecastCard key={day.dt} weatherData={day} units={temperatureUnit} />)}
 
                 </div>
                 <div>
@@ -23,9 +26,9 @@ export default async function Home({ searchParams }: { searchParams: { [key: str
                             <div className="card-body">
                                 <h2 className="card-header">Wind status</h2>
 
-                                <p className='text-content2'>{`${weatherData.current.wind_speed} km/h`}</p>
+                                <p className='text-content2'>{`${weatherData.current.wind_speed} ${speedUnit}`}</p>
                                 <div className="card-footer">
-                                    <p className='text-content1'>{`${weatherData.current.wind_deg}`}</p>
+                                    <p className='text-content1'>{`${weatherData.current.wind_deg} °`}</p>
                                 </div>
                             </div>
                         </div>
