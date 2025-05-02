@@ -4,20 +4,24 @@ import { getLocationCoordinates, getUserLocationFromCoordinates } from '../actio
 import { GeoCoderLocation } from '../types'
 import { from, fromEvent } from 'rxjs'
 import { debounceTime,switchMap,distinctUntilChanged,map,filter ,tap,catchError} from 'rxjs/operators'
-import { useRouter } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
 
 
 const SearchBar = () => {
     const [relevantLocations, setRelevantLocations] = useState<GeoCoderLocation[]>([])
     const router=useRouter()
+    const pathName=usePathname()
     useEffect(() => {
-        if('geolocation' in navigator){
-            navigator.geolocation.getCurrentPosition(async ({coords})=>{
-                const {latitude,longitude}=coords
-                const userLocation=await getUserLocationFromCoordinates({latitude,longitude})
-                router.push(`/?location=${userLocation[0].name}&state=${userLocation[0].state}&lat=${latitude}&lon=${longitude}`)
-            })
+        if(pathName==="/"){
+            if('geolocation' in navigator){
+                navigator.geolocation.getCurrentPosition(async ({coords})=>{
+                    const {latitude,longitude}=coords
+                    const userLocation=await getUserLocationFromCoordinates({latitude,longitude})
+                    router.push(`/?location=${userLocation[0].name}&state=${userLocation[0].state}&lat=${latitude}&lon=${longitude}`)
+                })
+            }
         }
+        
         const searchInput = document.getElementById("search-input");
         if (!searchInput) {
             console.error("Element with ID 'search' not found.");
@@ -46,7 +50,7 @@ const SearchBar = () => {
             <div className="dropdown">
                 <input className="input" placeholder="enter location"  id='search-input' />
                 <div className="dropdown-menu">
-                    {relevantLocations.map(location => <a key={`${location.lat}${location.lon}`} href={`?location=${location.name}&state=${location.state}&lat=${location.lat}&lon=${location.lon}`} className="dropdown-item text-sm">{`${location.name} ${location.country} ${location.state}`}</a>)}
+                    {relevantLocations.map(location => <a key={`${location.lat}${location.lon}`} href={`/search?location=${location.name}&state=${location.state}&lat=${location.lat}&lon=${location.lon}`} className="dropdown-item text-sm">{`${location.name} ${location.country} ${location.state}`}</a>)}
                 </div>
             </div>
             <button className="btn btn-primary">search</button>
