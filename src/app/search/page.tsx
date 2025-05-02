@@ -16,16 +16,14 @@ export default async function Home({ searchParams }: { searchParams: { [key: str
 
                 <SideBar weatherData={weatherData} location={location || "unknown"} units={temperatureUnit} />
 
-                <div className="flex flex-wrap">
-                    {weatherData.daily.slice(1, 4).map(day => <ForecastCard key={day.dt} weatherData={day} units={temperatureUnit} />)}
-
-                </div>
                 <div>
-                    <div>
+                    <div className="flex flex-wrap gap-2">
+                        {weatherData.daily.slice(1, 4).map(day => <ForecastCard key={day.dt} weatherData={day} units={temperatureUnit} />)}
+                    </div>
+                    <div className="flex gap-2 mt-2">
                         <div className="card w-80">
                             <div className="card-body">
                                 <h2 className="card-header">Wind status</h2>
-
                                 <p className='text-content2'>{`${weatherData.current.wind_speed} ${speedUnit}`}</p>
                                 <div className="card-footer">
                                     <p className='text-content1'>{`${weatherData.current.wind_deg} °`}</p>
@@ -35,17 +33,14 @@ export default async function Home({ searchParams }: { searchParams: { [key: str
                         <div className="card w-80">
                             <div className="card-body">
                                 <h2 className="card-header">Humidity</h2>
-
                                 <p className='text-content2'>{`${weatherData.current.humidity} %`}</p>
                                 <div className="card-footer">
                                     <progress className="progress" value={weatherData.current.humidity} max="100"></progress>
                                 </div>
                             </div>
                         </div>
-
                     </div>
                     <div>
-
                     </div>
                 </div>
             </div>
