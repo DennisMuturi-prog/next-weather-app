@@ -2,8 +2,7 @@ import { findBestMatch, formatDate } from "../actions/NaturalLib"
 import { WeatherData } from "../types"
 import Image from "next/image"
 
-function SideBar({ weatherData,location }: { weatherData: WeatherData,location:string }) {
-    const imageUrl = findBestMatch(weatherData.current.weather[0].main)
+function SideBar({ weatherData,location,units }: { weatherData: WeatherData,location:string,units:string }) {
     return (
         <aside className="sidebar justify-start">
             <section className="sidebar-content pl-4">
@@ -12,7 +11,7 @@ function SideBar({ weatherData,location }: { weatherData: WeatherData,location:s
                     width={200}
                     height={200}
                     alt="weather condition" />
-                <p>{weatherData.current.temp}</p>
+                <p>{`${weatherData.current.temp} ${units}`}</p>
                 <p className="mt-10">{formatDate(weatherData.current.dt)}</p>
                 <p>{location}</p>
 
