@@ -16,9 +16,9 @@ export async function getUserLocationFromCoordinates(locationCoordinates:Coordin
     const data = await res.json()
     return data
 }
-export async function getWeatherDetails(locationCoordinates:Coordinates):Promise<WeatherData>{
+export async function getWeatherDetails(locationCoordinates:Coordinates,units:string):Promise<WeatherData>{
     const {latitude,longitude}=locationCoordinates
-    const res=await fetch(`http://localhost:8000/api?latitude=${latitude}&longitude=${longitude}&units=standard`,{
+    const res=await fetch(`http://localhost:8000/api?latitude=${latitude}&longitude=${longitude}&units=${units}`,{
         method:"GET",
         headers:{
             "Content-Type":"application/json"
