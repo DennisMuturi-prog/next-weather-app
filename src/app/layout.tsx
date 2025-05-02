@@ -30,16 +30,6 @@ export default function RootLayout({
       >
         <div className="navbar">
           <SearchBar />
-          <div className="navbar-end">
-            <div className="tabs tabs-boxed">
-              <input type="radio" name="units" id="unit1" className="tab-toggle" defaultChecked />
-              <label htmlFor="unit1" className="tab navbar-item">Celcius</label>
-              <input type="radio" name="units" id="unit2" className="tab-toggle" />
-              <label htmlFor="unit2" className="tab">Fahrenheit</label>
-              <input type="radio" name="units" id="unit3" className="tab-toggle" />
-              <label htmlFor="unit3" className="tab">Kelvin</label>
-            </div>
-          </div>
         </div>
         {children}
       </body>
