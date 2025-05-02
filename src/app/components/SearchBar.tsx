@@ -53,8 +53,8 @@ const SearchBar = () => {
         currentParams.set("units", newUnit); // Update the "units" parameter
         router.push(`${pathName}?${currentParams.toString()}`); // Push the updated query parameters
     };
-    const onSearchClick=()=>{
-        const location=relevantLocations[0]
+    const onSearchClick = () => {
+        const location = relevantLocations[0]
         router.push(`/search?location=${location.name}&state=${location.state}&lat=${location.lat}&lon=${location.lon}&units=${searchParams.get("units") || "metric"}`)
     }
     return (
@@ -70,13 +70,15 @@ const SearchBar = () => {
             </div>
             <div className="navbar-end">
                 <div className="tabs tabs-boxed">
-                    <input type="radio" name="units" id="unit1" className="tab-toggle" value="metric" defaultChecked
+                    <input type="radio" name="units" id="unit1" className="tab-toggle" value="metric" defaultChecked={searchParams.get("units") == "metric"}
                         onChange={handleUnitsChange} />
                     <label htmlFor="unit1" className="tab navbar-item">Celcius</label>
                     <input type="radio" name="units" id="unit2" className="tab-toggle" value="imperial"
+                        defaultChecked={searchParams.get("units") == "imperial"}
                         onChange={handleUnitsChange} />
                     <label htmlFor="unit2" className="tab">Fahrenheit</label>
                     <input type="radio" name="units" id="unit3" className="tab-toggle" value="standard"
+                        defaultChecked={searchParams.get("units") == "standard"}
                         onChange={handleUnitsChange} />
                     <label htmlFor="unit3" className="tab">Kelvin</label>
                 </div>
