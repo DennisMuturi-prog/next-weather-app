@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import SearchBar from "./components/SearchBar"
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -27,6 +28,19 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
+        <div className="navbar">
+          <SearchBar />
+          <div className="navbar-end">
+            <div className="tabs tabs-boxed">
+              <input type="radio" name="units" id="unit1" className="tab-toggle" defaultChecked />
+              <label htmlFor="unit1" className="tab navbar-item">Celcius</label>
+              <input type="radio" name="units" id="unit2" className="tab-toggle" />
+              <label htmlFor="unit2" className="tab">Fahrenheit</label>
+              <input type="radio" name="units" id="unit3" className="tab-toggle" />
+              <label htmlFor="unit3" className="tab">Kelvin</label>
+            </div>
+          </div>
+        </div>
         {children}
       </body>
     </html>
