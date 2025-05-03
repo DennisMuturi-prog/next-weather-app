@@ -1,6 +1,6 @@
 import React from 'react'
 import { Daily, WeatherData } from '../types'
-import { findBestMatch, formatDate } from '../actions/NaturalLib'
+import { formatDate } from '../actions/utilities'
 import Image from 'next/image'
 
 function ForecastCard({ weatherData,units }: { weatherData: Daily,units:string }) {

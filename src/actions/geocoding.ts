@@ -1,5 +1,6 @@
 "use server";
 
+import { error } from "console";
 import { Coordinates, GeoCoderLocation, UserLocation, WeatherData } from "../types";
 
 export async function getLocationCoordinates(searchTerm: string): Promise<GeoCoderLocation[]> {
@@ -27,12 +28,3 @@ export async function getWeatherDetails(locationCoordinates:Coordinates,units:st
     const data=res.json()
     return data
 }
-
-
-
-
-// export async function getRelevantGeoLocations(searchTerm: string) {
-//     return 
-
-
-// }

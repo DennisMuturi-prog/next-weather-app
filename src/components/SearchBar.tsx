@@ -5,9 +5,12 @@ import { GeoCoderLocation } from '../types'
 import { from, fromEvent } from 'rxjs'
 import { debounceTime, switchMap, distinctUntilChanged, map, filter, tap, catchError } from 'rxjs/operators'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
+import toast from 'react-hot-toast'
+import Link from 'next/link'
 
 
 const SearchBar = () => {
+    const [searchLocation, setSearchLocation] = useState("")
     const [relevantLocations, setRelevantLocations] = useState<GeoCoderLocation[]>([])
     const searchParams = useSearchParams()
 
@@ -36,6 +39,7 @@ const SearchBar = () => {
             distinctUntilChanged(),
             switchMap(searchKey => from(getLocationCoordinates(searchKey as string)).pipe(
                 catchError((err) => {
+                    toast.error("an error occurred while searching for locations")
                     return [];
                 })
 
@@ -48,20 +52,31 @@ const SearchBar = () => {
 
     }, [])
     const handleUnitsChange = (event: ChangeEvent<HTMLInputElement>) => {
+        toast.loading("changing units", {
+            duration: 1000
+        })
         const newUnit = event.target.value; // Get the selected unit
         const currentParams = new URLSearchParams(searchParams.toString()); // Clone current query parameters
         currentParams.set("units", newUnit); // Update the "units" parameter
-        router.push(`${pathName}?${currentParams.toString()}`); // Push the updated query parameters
+        router.push(`${pathName}?${currentParams.toString()}`);
+        // Push the updated query parameters
     };
-    const onSearchClick = () => {
-        const location = relevantLocations[0]
+    const onSearchClick = async () => {
+        console.log(searchLocation)
+        toast.loading("fetching coordinates")
+        const relevantLocales = await getLocationCoordinates(searchLocation)
+        const location = relevantLocales[0]
         router.push(`/search?location=${location.name}&state=${location.state}&lat=${location.lat}&lon=${location.lon}&units=${searchParams.get("units") || "metric"}`)
+        toast.dismiss()
     }
     return (
         <>
+            <div className="navbar-start">
+                <a href={`/?units=${searchParams.get("units") || "metric"}`}>Home</a>
+            </div>
             <div className="navbar-center">
                 <div className="dropdown">
-                    <input className="input" placeholder="enter location" id='search-input' />
+                    <input className="input" placeholder="enter location" id='search-input' onChange={e => setSearchLocation(e.target.value)} />
                     <div className="dropdown-menu">
                         {relevantLocations.map(location => <a key={`${location.lat}${location.lon}`} href={`/search?location=${location.name}&state=${location.state}&lat=${location.lat}&lon=${location.lon}&units=${searchParams.get("units") || "metric"}`} className="dropdown-item text-sm">{`${location.name} ${location.country} ${location.state}`}</a>)}
                     </div>
