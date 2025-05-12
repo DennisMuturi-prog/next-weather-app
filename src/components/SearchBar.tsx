@@ -90,13 +90,13 @@ const SearchBar = () => {
                 <div className="dropdown">
                     <input className="input" placeholder="enter location" id='search-input' onChange={e => setSearchLocation(e.target.value)} />
                     <div className="dropdown-menu">
-                        {relevantLocations.length > 0 ? relevantLocations.map(location => <a key={`${location.lat}${location.lon}`} className="dropdown-item text-sm" onClick={() => {
+                        {relevantLocations.length > 0 ? relevantLocations.map(location => <button key={`${location.lat}${location.lon}`} className="dropdown-item text-sm" onClick={() => {
                             toast.loading("fetching weather details...", {
                                 duration: 1000
                             })
                             console.log(`/?location=${location.name}&state=${location.state}&lat=${location.lat}&lon=${location.lon}&units=${searchParams.get("units") || "metric"}`)
                             router.push(`/?location=${location.name}&state=${location.state?location.state:"unkown"}&lat=${location.lat}&lon=${location.lon}&units=${searchParams.get("units") || "metric"}`)
-                        }}>{`${location.name} ${location.country} ${location.state}`}</a>) : (<a className='dropdown-item text-sm'>no results</a>)}
+                        }}>{`${location.name} ${location.country} ${location.state}`}</button>) : (<a className='dropdown-item text-sm'>no results</a>)}
                     </div>
                 </div>
                 <button className="btn btn-primary" onClick={onSearchClick}>search</button>
