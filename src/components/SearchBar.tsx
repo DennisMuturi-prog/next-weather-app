@@ -1,5 +1,5 @@
 "use client"
-import { ChangeEvent, useEffect, useRef, useState } from 'react'
+import { ChangeEvent, useEffect, useState } from 'react'
 import { getLocationCoordinates, getUserLocationFromCoordinates } from '../actions/geocoding'
 import { Coordinates, GeoCoderLocation, UserLocation } from '../types'
 import { from, fromEvent } from 'rxjs'
@@ -14,7 +14,6 @@ const SearchBar = () => {
     const [relevantLocations, setRelevantLocations] = useState<GeoCoderLocation[]>([])
     const [userCoordinates, setUserCoordinates] = useState<Coordinates>()
     const [userLocation, setUserLocation] = useState<UserLocation>()
-    const inputRef = useRef<HTMLInputElement>(null)
     const [dropdownOpen, setDropDownOpen] = useState(false)
 
     const searchParams = useSearchParams()
