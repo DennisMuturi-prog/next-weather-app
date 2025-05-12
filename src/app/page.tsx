@@ -1,10 +1,8 @@
 import { getWeatherDetails } from "../actions/geocoding";
-import ForecastCard from "../components/ForecastCard";
-import SideBar from "../components/SideBar";
 import WeatherDetails from "../components/WeatherDetails";
 
-export default async function Home({ searchParams }: { searchParams: { [key: string]: string | undefined } }) {
-    const { lat, lon, location, state,units } = await searchParams
+export default async function Home({ searchParams }: { searchParams:Promise< { [key: string]: string | undefined } >}) {
+    const { lat, lon, location,units } = await searchParams
     const weatherData = await getWeatherDetails({ latitude: lat ? Number(lat) : 20, longitude: lon ? Number(lon) : 20 },units || 'metric')
     const measureUnit = units || "metric"
     const temperatureUnit = measureUnit === "metric" ? "°C" : measureUnit === "imperial" ? "°F" : "K";
