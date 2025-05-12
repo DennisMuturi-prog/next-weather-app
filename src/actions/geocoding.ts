@@ -1,6 +1,7 @@
 "use server"
 import { Coordinates, GeoCoderLocation, UserLocation, WeatherData } from "../types";
 
+const API_KEY =process.env.API_KEY
 export async function getLocationCoordinates(searchTerm: string): Promise<GeoCoderLocation[]> {
     const apiKey = process.env.API_KEY
     const res = await fetch(`http://api.openweathermap.org/geo/1.0/direct?q=${searchTerm}&limit=5&appid=${apiKey}`)
