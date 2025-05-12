@@ -18,8 +18,9 @@ export async function getUserLocationFromCoordinates(locationCoordinates:Coordin
     return data
 }
 export async function getWeatherDetails(locationCoordinates:Coordinates,units:string):Promise<WeatherData>{
+    const apiKey = process.env.API_KEY
     const {latitude,longitude}=locationCoordinates
-    const res=await fetch(`http://localhost:8000/api?latitude=${latitude}&longitude=${longitude}&units=${units}`,{
+    const res=await fetch(`https://api.openweathermap.org/data/3.0/onecall?lat=${latitude}&lon=${longitude}&exclude={part}&appid=${apiKey}/`,{
         method:"GET",
         headers:{
             "Content-Type":"application/json"
