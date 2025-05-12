@@ -12,8 +12,8 @@ import Link from 'next/link'
 const SearchBar = () => {
     const [searchLocation, setSearchLocation] = useState("")
     const [relevantLocations, setRelevantLocations] = useState<GeoCoderLocation[]>([])
-    const [userCoordinates,setUserCoordinates]=useState<Coordinates>()
-    const [userLocation,setUserLocation]=useState<UserLocation>()
+    const [userCoordinates, setUserCoordinates] = useState<Coordinates>()
+    const [userLocation, setUserLocation] = useState<UserLocation>()
 
     const searchParams = useSearchParams()
 
@@ -21,13 +21,14 @@ const SearchBar = () => {
     const pathName = usePathname()
     useEffect(() => {
         if ('geolocation' in navigator) {
-            console.log("I was run")
             navigator.geolocation.getCurrentPosition(async ({ coords }) => {
                 setUserCoordinates(coords)
                 const { latitude, longitude } = coords
                 const userLocation = await getUserLocationFromCoordinates({ latitude, longitude })
                 setUserLocation(userLocation[0])
-                router.push(`/?location=${userLocation[0].name}&state=${userLocation[0].state}&lat=${latitude}&lon=${longitude}&units=${searchParams.get("units") || "metric"}`)
+                if (!searchParams.get("location")) {
+                    router.push(`/?location=${userLocation[0].name}&state=${userLocation[0].state}&lat=${latitude}&lon=${longitude}&units=${searchParams.get("units") || "metric"}`)
+                }
             })
         }
 
@@ -45,7 +46,9 @@ const SearchBar = () => {
             switchMap(searchKey => from(getLocationCoordinates(searchKey as string)).pipe(
                 catchError((err) => {
                     console.log(err)
-                    toast.error("an error occurred while searching for locations")
+                    toast.error("an error occurred while searching for locations", {
+                        duration: 2000
+                    })
                     return [];
                 })
 
@@ -68,12 +71,15 @@ const SearchBar = () => {
         // Push the updated query parameters
     };
     const onSearchClick = async () => {
-        console.log(searchLocation)
-        toast.loading("fetching coordinates")
-        const relevantLocales = await getLocationCoordinates(searchLocation)
-        const location = relevantLocales[0]
-        router.push(`/search?location=${location.name}&state=${location.state}&lat=${location.lat}&lon=${location.lon}&units=${searchParams.get("units") || "metric"}`)
-        toast.dismiss()
+        const myFetchPromise = getLocationCoordinates(searchLocation)
+        toast.promise(
+            myFetchPromise,
+            {
+                loading: 'fetching coordinates',
+                success: (data) => data.length > 0 ? "success" : "no results found",
+                error: 'an error occurred while fetching coordinates'
+            }
+        )
     }
     return (
         <>
@@ -84,7 +90,13 @@ const SearchBar = () => {
                 <div className="dropdown">
                     <input className="input" placeholder="enter location" id='search-input' onChange={e => setSearchLocation(e.target.value)} />
                     <div className="dropdown-menu">
-                        {relevantLocations.map(location => <Link key={`${location.lat}${location.lon}`} href={`/?location=${location.name}&state=${location.state}&lat=${location.lat}&lon=${location.lon}&units=${searchParams.get("units") || "metric"}`} className="dropdown-item text-sm">{`${location.name} ${location.country} ${location.state}`}</Link>)}
+                        {relevantLocations.length > 0 ? relevantLocations.map(location => <a key={`${location.lat}${location.lon}`} className="dropdown-item text-sm" onClick={() => {
+                            toast.loading("fetching weather details...", {
+                                duration: 1000
+                            })
+                            console.log(`/?location=${location.name}&state=${location.state}&lat=${location.lat}&lon=${location.lon}&units=${searchParams.get("units") || "metric"}`)
+                            router.push(`/?location=${location.name}&state=${location.state?location.state:"unkown"}&lat=${location.lat}&lon=${location.lon}&units=${searchParams.get("units") || "metric"}`)
+                        }}>{`${location.name} ${location.country} ${location.state}`}</a>) : (<a className='dropdown-item text-sm'>no results</a>)}
                     </div>
                 </div>
                 <button className="btn btn-primary" onClick={onSearchClick}>search</button>
