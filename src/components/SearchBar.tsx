@@ -3,7 +3,7 @@ import { ChangeEvent, useEffect, useState } from 'react'
 import { getLocationCoordinates, getUserLocationFromCoordinates } from '../actions/geocoding'
 import { Coordinates, GeoCoderLocation, UserLocation } from '../types'
 import { from, fromEvent } from 'rxjs'
-import { debounceTime, switchMap, distinctUntilChanged, map, filter, tap, catchError } from 'rxjs/operators'
+import { debounceTime, switchMap, distinctUntilChanged, map, filter, catchError } from 'rxjs/operators'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import toast from 'react-hot-toast'
 import Link from 'next/link'
@@ -44,6 +44,7 @@ const SearchBar = () => {
             distinctUntilChanged(),
             switchMap(searchKey => from(getLocationCoordinates(searchKey as string)).pipe(
                 catchError((err) => {
+                    console.log(err)
                     toast.error("an error occurred while searching for locations")
                     return [];
                 })
