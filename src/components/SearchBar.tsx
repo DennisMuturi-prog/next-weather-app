@@ -1,5 +1,5 @@
 "use client"
-import { ChangeEvent, useEffect, useState } from 'react'
+import { ChangeEvent, useEffect, useRef, useState } from 'react'
 import { getLocationCoordinates, getUserLocationFromCoordinates } from '../actions/geocoding'
 import { Coordinates, GeoCoderLocation, UserLocation } from '../types'
 import { from, fromEvent } from 'rxjs'
@@ -14,6 +14,8 @@ const SearchBar = () => {
     const [relevantLocations, setRelevantLocations] = useState<GeoCoderLocation[]>([])
     const [userCoordinates, setUserCoordinates] = useState<Coordinates>()
     const [userLocation, setUserLocation] = useState<UserLocation>()
+    const inputRef = useRef<HTMLInputElement>(null)
+    const [dropdownOpen, setDropDownOpen] = useState(false)
 
     const searchParams = useSearchParams()
 
@@ -26,6 +28,7 @@ const SearchBar = () => {
                 const { latitude, longitude } = coords
                 const userLocation = await getUserLocationFromCoordinates({ latitude, longitude })
                 setUserLocation(userLocation[0])
+                console.log("I WAS RUN", new Date())
                 if (!searchParams.get("location")) {
                     router.push(`/?location=${userLocation[0].name}&state=${userLocation[0].state}&lat=${latitude}&lon=${longitude}&units=${searchParams.get("units") || "metric"}`)
                 }
@@ -88,16 +91,17 @@ const SearchBar = () => {
             </div>
             <div className="navbar-center">
                 <div className="dropdown">
-                    <input className="input" placeholder="enter location" id='search-input' onChange={e => setSearchLocation(e.target.value)} />
-                    <div className="dropdown-menu">
-                        {relevantLocations.length > 0 ? relevantLocations.map(location => <button key={`${location.lat}${location.lon}`} className="dropdown-item text-sm" onClick={() => {
-                            toast.loading("fetching weather details...", {
-                                duration: 1000
-                            })
-                            console.log(`/?location=${location.name}&state=${location.state}&lat=${location.lat}&lon=${location.lon}&units=${searchParams.get("units") || "metric"}`)
-                            router.push(`/?location=${location.name}&state=${location.state?location.state:"unkown"}&lat=${location.lat}&lon=${location.lon}&units=${searchParams.get("units") || "metric"}`)
-                        }}>{`${location.name} ${location.country} ${location.state}`}</button>) : (<a className='dropdown-item text-sm'>no results</a>)}
-                    </div>
+                    <input className="input" placeholder="enter location" id='search-input' onChange={e => setSearchLocation(e.target.value)} onFocus={() => setDropDownOpen(true)} />
+                    {dropdownOpen && <div className="dropdown-menu">
+                        {relevantLocations.length > 0 ? relevantLocations.map(location => <button key={`${location.lat} ${location.lon}`} className="dropdown-item text-sm"
+                            onClick={() => {
+                                setDropDownOpen(false)
+                                toast.loading("fetching weather details...", {
+                                    duration: 1000
+                                })
+                                router.push(`/?location=${location.name}&state=${location.state ? location.state : "unkown"}&lat=${location.lat}&lon=${location.lon}&units=${searchParams.get("units") || "metric"}`)
+                            }}>{`${location.name} ${location.country} ${location.state}`}</button>) : (<a className='dropdown-item text-sm'>no results</a>)}
+                    </div>}
                 </div>
                 <button className="btn btn-primary" onClick={onSearchClick}>search</button>
             </div>
