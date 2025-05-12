@@ -1,8 +1,9 @@
-"use server";
+"use server"
 import { Coordinates, GeoCoderLocation, UserLocation, WeatherData } from "../types";
 
 export async function getLocationCoordinates(searchTerm: string): Promise<GeoCoderLocation[]> {
     const apiKey = process.env.API_KEY
+    console.log('api key',apiKey)
     const res = await fetch(`http://api.openweathermap.org/geo/1.0/direct?q=${searchTerm}&limit=5&appid=${apiKey}`)
     const data = await res.json()
     return data
@@ -13,17 +14,5 @@ export async function getUserLocationFromCoordinates(locationCoordinates:Coordin
     const {latitude,longitude}=locationCoordinates
     const res = await fetch(`http://api.openweathermap.org/geo/1.0/reverse?lat=${latitude}&lon=${longitude}&limit=5&appid=${apiKey}`)
     const data = await res.json()
-    return data
-}
-export async function getWeatherDetails(locationCoordinates:Coordinates,units:string):Promise<WeatherData>{
-    const apiKey = process.env.API_KEY
-    const {latitude,longitude}=locationCoordinates
-    const res=await fetch(`https://api.openweathermap.org/data/3.0/onecall?lat=${latitude}&lon=${longitude}&units=${units}exclude={minutely,hourly,alerts}&appid=${apiKey}/`,{
-        method:"GET",
-        headers:{
-            "Content-Type":"application/json"
-        }
-    })
-    const data=res.json()
     return data
 }
