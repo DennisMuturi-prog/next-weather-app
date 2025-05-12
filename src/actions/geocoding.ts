@@ -3,7 +3,6 @@ import { Coordinates, GeoCoderLocation, UserLocation, WeatherData } from "../typ
 
 export async function getLocationCoordinates(searchTerm: string): Promise<GeoCoderLocation[]> {
     const apiKey = process.env.API_KEY
-    console.log('api key',apiKey)
     const res = await fetch(`http://api.openweathermap.org/geo/1.0/direct?q=${searchTerm}&limit=5&appid=${apiKey}`)
     const data = await res.json()
     return data
