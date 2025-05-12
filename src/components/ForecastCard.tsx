@@ -1,4 +1,3 @@
-import React from 'react'
 import { Daily} from '../types'
 import { formatDate } from '../actions/utilities'
 import Image from 'next/image'
