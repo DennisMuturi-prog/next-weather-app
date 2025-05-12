@@ -2,11 +2,11 @@ import { WeatherData } from "../types"
 import SideBar from "./SideBar"
 import ForecastCard from "./ForecastCard"
 
-function WeatherDetails({weatherData,location,temperatureUnit,speedUnit}:{weatherData:WeatherData,location:string,temperatureUnit:string,speedUnit:string}) {
+function WeatherDetails({weatherData,location,temperatureUnit,speedUnit,state}:{weatherData:WeatherData,location:string,temperatureUnit:string,speedUnit:string,state:string}) {
   return <>
   <div className="flex">
 
-      <SideBar weatherData={weatherData} location={location || "unknown"} units={temperatureUnit} />
+      <SideBar weatherData={weatherData} location={location || "unknown"} units={temperatureUnit} state={state} />
 
       <div>
           <div className="flex flex-wrap gap-2">
