@@ -64,7 +64,7 @@ const SearchBar = () => {
     }, [])
     const handleUnitsChange = (event: ChangeEvent<HTMLInputElement>) => {
         toast.loading("changing units", {
-            duration: 1000
+            duration: 500
         })
         const newUnit = event.target.value; // Get the selected unit
         const currentParams = new URLSearchParams(searchParams.toString()); // Clone current query parameters
@@ -99,7 +99,7 @@ const SearchBar = () => {
                             onClick={() => {
                                 setDropDownOpen(false)
                                 toast.loading("fetching weather details...", {
-                                    duration: 1000
+                                    duration: 500
                                 })
                                 router.push(`/?location=${location.name}&state=${location.state ? location.state : "unkown"}&lat=${location.lat}&lon=${location.lon}&units=${searchParams.get("units") || "metric"}`)
                             }}>{`${location.name} ${location.country} ${location.state}`}</button>) : (<a className='dropdown-item text-sm'>no results</a>)}
