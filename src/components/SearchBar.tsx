@@ -89,7 +89,7 @@ const SearchBar = () => {
     return (
         <>
             <div className="navbar-start">
-                <Link href={`/?units=${searchParams.get("units") || "metric"}&lat=${userCoordinates?.latitude}&lon=${userCoordinates?.longitude}&location=${userLocation?.name}&state=${userLocation?.state}`}>Home alone</Link>
+                <Link href={`/?units=${searchParams.get("units") || "metric"}&lat=${userCoordinates?.latitude}&lon=${userCoordinates?.longitude}&location=${userLocation?.name}&state=${userLocation?.state}`}>Home</Link>
             </div>
             <div className="navbar-center">
                 <div className="dropdown">
