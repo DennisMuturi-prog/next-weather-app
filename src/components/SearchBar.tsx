@@ -78,7 +78,10 @@ const SearchBar = () => {
             myFetchPromise,
             {
                 loading: 'fetching coordinates',
-                success: (data) => data.length > 0 ? "success" : "no results found",
+                success: (data) => {
+                    const firstLocale=data[0]
+                    router.push(`?lat=${firstLocale.lat}&lon=${firstLocale.lon}&location=${firstLocale.name}&state=${firstLocale.state}&units=${searchParams.get('units') || 'metric'}`)
+                    return data.length > 0 ? "success" : "no results found"},
                 error: 'an error occurred while fetching coordinates'
             }
         )
@@ -106,7 +109,7 @@ const SearchBar = () => {
             </div>
             <div className="navbar-end">
                 <div className="tabs tabs-boxed">
-                    <input type="radio" name="units" id="unit1" className="tab-toggle" value="metric" defaultChecked={searchParams.get("units") == "metric"}
+                    <input type="radio" name="units" id="unit1" className="tab-toggle" value="metric" defaultChecked={searchParams.get("units") == "metric" || !searchParams.get("units")}
                         onChange={handleUnitsChange} />
                     <label htmlFor="unit1" className="tab navbar-item">Celcius</label>
                     <input type="radio" name="units" id="unit2" className="tab-toggle" value="imperial"
