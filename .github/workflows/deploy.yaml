@@ -18,5 +18,5 @@ jobs:
           key: ${{ secrets.EC2_SSH_KEY }}
           port: 22
           script: |
-            cd myScripts
+            cd myscripts
             ./weatherApp.sh
