@@ -1,7 +1,7 @@
 "use client"
 import { ChangeEvent, useEffect, useState, useTransition } from 'react'
 import { getLocationCoordinates, getUserLocationFromCoordinates } from '../actions/geocoding'
-import { Coordinates, GeoCoderLocation, UserLocation } from '../types'
+import {  GeoCoderLocation} from '../types'
 import { from, fromEvent } from 'rxjs'
 import { debounceTime, switchMap, distinctUntilChanged, map, filter, catchError } from 'rxjs/operators'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
@@ -12,8 +12,6 @@ const SearchBar = () => {
     const [isPending, startTransition] = useTransition()
     const [searchLocation, setSearchLocation] = useState("")
     const [relevantLocations, setRelevantLocations] = useState<GeoCoderLocation[]>([])
-    const [userCoordinates, setUserCoordinates] = useState<Coordinates>()
-    const [userLocation, setUserLocation] = useState<UserLocation>()
     const [dropdownOpen, setDropDownOpen] = useState(false)
 
     const searchParams = useSearchParams()
@@ -92,10 +90,8 @@ const SearchBar = () => {
     const fetchUserGeoLocation = async () => {
         if ('geolocation' in navigator) {
             navigator.geolocation.getCurrentPosition(async ({ coords }) => {
-                setUserCoordinates(coords)
                 const { latitude, longitude } = coords
                 const userLocation = await getUserLocationFromCoordinates({ latitude, longitude })
-                setUserLocation(userLocation[0])
                 startTransition(() => {
                     router.push(`/?location=${userLocation[0].name}&state=${userLocation[0].state}&lat=${latitude}&lon=${longitude}&units=${searchParams.get("units") || "metric"}`)
                 })
