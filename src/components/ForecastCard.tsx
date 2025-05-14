@@ -8,7 +8,7 @@ function ForecastCard({ weatherData,units }: { weatherData: Daily,units:string }
             <div className="card-body">
                 <h2 className="card-header">{formatDate(weatherData.dt)}</h2>
                 <Image
-                    src={`https://openweathermap.org/img/wn/${weatherData.weather[0].icon}@4x.png`
+                    src={`https://openweathermap.org/img/wn/${weatherData.weather[0].icon}@2x.png`
                     }
                     width={100}
                     height={100}
