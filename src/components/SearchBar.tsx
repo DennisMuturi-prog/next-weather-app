@@ -1,5 +1,5 @@
 "use client"
-import { ChangeEvent, useEffect, useState } from 'react'
+import { ChangeEvent, useEffect, useState, useTransition } from 'react'
 import { getLocationCoordinates, getUserLocationFromCoordinates } from '../actions/geocoding'
 import { Coordinates, GeoCoderLocation, UserLocation } from '../types'
 import { from, fromEvent } from 'rxjs'
@@ -10,6 +10,7 @@ import Link from 'next/link'
 
 
 const SearchBar = () => {
+    const [isPending, startTransition] = useTransition()
     const [searchLocation, setSearchLocation] = useState("")
     const [relevantLocations, setRelevantLocations] = useState<GeoCoderLocation[]>([])
     const [userCoordinates, setUserCoordinates] = useState<Coordinates>()
@@ -27,9 +28,10 @@ const SearchBar = () => {
                 const { latitude, longitude } = coords
                 const userLocation = await getUserLocationFromCoordinates({ latitude, longitude })
                 setUserLocation(userLocation[0])
-                console.log("I WAS RUN", new Date())
                 if (!searchParams.get("location")) {
-                    router.push(`/?location=${userLocation[0].name}&state=${userLocation[0].state}&lat=${latitude}&lon=${longitude}&units=${searchParams.get("units") || "metric"}`)
+                    startTransition(() => {
+                        router.push(`/?location=${userLocation[0].name}&state=${userLocation[0].state}&lat=${latitude}&lon=${longitude}&units=${searchParams.get("units") || "metric"}`)
+                    })
                 }
             })
         }
@@ -55,7 +57,11 @@ const SearchBar = () => {
                 })
 
             )))
-            .subscribe(setRelevantLocations);
+            .subscribe((relevantLocales) => {
+                startTransition(() => {
+                    setRelevantLocations(relevantLocales)
+                })
+            });
 
         return () => subscription.unsubscribe()
 
@@ -63,13 +69,12 @@ const SearchBar = () => {
 
     }, [])
     const handleUnitsChange = (event: ChangeEvent<HTMLInputElement>) => {
-        toast.loading("changing units", {
-            duration: 1000
-        })
         const newUnit = event.target.value; // Get the selected unit
         const currentParams = new URLSearchParams(searchParams.toString()); // Clone current query parameters
         currentParams.set("units", newUnit); // Update the "units" parameter
-        router.push(`${pathName}?${currentParams.toString()}`);
+        startTransition(() => {
+            router.push(`${pathName}?${currentParams.toString()}`);
+        })
         // Push the updated query parameters
     };
     const onSearchClick = async () => {
@@ -79,9 +84,12 @@ const SearchBar = () => {
             {
                 loading: 'fetching coordinates',
                 success: (data) => {
-                    const firstLocale=data[0]
-                    router.push(`?lat=${firstLocale.lat}&lon=${firstLocale.lon}&location=${firstLocale.name}&state=${firstLocale.state}&units=${searchParams.get('units') || 'metric'}`)
-                    return data.length > 0 ? "success" : "no results found"},
+                    const firstLocale = data[0]
+                    startTransition(() => {
+                        router.push(`?lat=${firstLocale.lat}&lon=${firstLocale.lon}&location=${firstLocale.name}&state=${firstLocale.state}&units=${searchParams.get('units') || 'metric'}`)
+                    })
+                    return data.length > 0 ? "successfully fetched coordinates" : "no results found"
+                },
                 error: 'an error occurred while fetching coordinates'
             }
         )
@@ -98,13 +106,15 @@ const SearchBar = () => {
                         {relevantLocations.length > 0 ? relevantLocations.map(location => <button key={`${location.lat} ${location.lon}`} className="dropdown-item text-sm"
                             onClick={() => {
                                 setDropDownOpen(false)
-                                toast.loading("fetching weather details...", {
-                                    duration: 1000
+                                startTransition(() => {
+                                    router.push(`/?location=${location.name}&state=${location.state ? location.state : "unkown"}&lat=${location.lat}&lon=${location.lon}&units=${searchParams.get("units") || "metric"}`)
                                 })
-                                router.push(`/?location=${location.name}&state=${location.state ? location.state : "unkown"}&lat=${location.lat}&lon=${location.lon}&units=${searchParams.get("units") || "metric"}`)
-                            }}>{`${location.name} ${location.country} ${location.state}`}</button>) : (<a className='dropdown-item text-sm'>no results</a>)}
+                            }}>{`${location.name} ${location.country} ${location.state}`}</button>) : isPending?(<a className='dropdown-item'>
+                                <div className="spinner-simple spinner-sm"></div>
+                            </a>):(<a className='dropdown-item text-sm'>no results</a>)}
                     </div>}
                 </div>
+                {(isPending&&!dropdownOpen) && <div className="spinner-simple"></div>}
                 <button className="btn btn-primary" onClick={onSearchClick}>search</button>
             </div>
             <div className="navbar-end">
