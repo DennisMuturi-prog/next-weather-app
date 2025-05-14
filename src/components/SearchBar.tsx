@@ -6,7 +6,6 @@ import { from, fromEvent } from 'rxjs'
 import { debounceTime, switchMap, distinctUntilChanged, map, filter, catchError } from 'rxjs/operators'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import toast from 'react-hot-toast'
-import Link from 'next/link'
 
 
 const SearchBar = () => {
